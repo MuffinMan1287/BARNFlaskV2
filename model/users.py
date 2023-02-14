@@ -1,67 +1,32 @@
 """ database dependencies to support sqliteDB examples """
 from random import randrange
-from datetime import date
 import os, base64
 import json
 
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 ''' Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along '''
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
 class Post(db.Model):
-    __tablename__ = 'posts'
+    __tablename__ = 'stats'
 
     # Define the Notes schema
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('stats.id'), primary_key=True)
     note = db.Column(db.Text, unique=False, nullable=False)
     image = db.Column(db.String, unique=False)
     # Define a relationship in Notes Schema to userID who originates the note, many-to-one (many notes to one user)
-    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, note, image):
-        self.userID = id
-        self.note = note
-        self.image = image
+
 
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
-    def __repr__(self):
-        return "Notes(" + str(self.id) + "," + self.note + "," + str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
-    def create(self):
-        try:
-            # creates a Notes object from Notes(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist person object to Notes table
-            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
-            return self
-        except IntegrityError:
-            db.session.remove()
-            return None
-
-    # CRUD read, returns dictionary representation of Notes object
-    # returns dictionary
-    def read(self):
-        # encode image
-        path = app.config['UPLOAD_FOLDER']
-        file = os.path.join(path, self.image)
-        file_text = open(file, 'rb')
-        file_read = file_text.read()
-        file_encode = base64.encodebytes(file_read)
-        
-        return {
-            "id": self.id,
-            "userID": self.userID,
-            "note": self.note,
-            "image": self.image,
-            "base64": str(file_encode)
-        }
 
 
 # Define the User class to manage actions in the 'users' table
@@ -70,24 +35,25 @@ class Post(db.Model):
 # -- b.) User represents data we want to store, something that is built on db.Model
 # -- c.) SQLAlchemy ORM is layer on top of SQLAlchemy Core, then SQLAlchemy engine, SQL
 class User(db.Model):
-    __tablename__ = 'users'  # table name is plural, class name is singular
+    __tablename__ = 'top10qbs'  # table name is plural, class name is singular
 
     # Define the User schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
     _name = db.Column(db.String(255), unique=False, nullable=False)
-    _uid = db.Column(db.String(255), unique=True, nullable=False)
-    _password = db.Column(db.String(255), unique=False, nullable=False)
-    _dob = db.Column(db.Date)
-
-    # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
-    posts = db.relationship("Post", cascade='all, delete', backref='users', lazy=True)
+    _atts = db.Column(db.String(255), unique=False, nullable=False)
+    _comps = db.Column(db.String(255), unique=False, nullable=False)
+    _yards = db.Column(db.String(255), unique=False, nullable=False)
+    _tds = db.Column(db.String(255), unique=False, nullable=False)
+    _pimage = db.Column(db.String, unique=False)
 
     # constructor of a User object, initializes the instance variables within object (self)
-    def __init__(self, name, uid, password="123qwerty", dob=date.today()):
+    def __init__(self, name, atts, comps, yards, tds, pimage):
         self._name = name    # variables with self prefix become part of the object, 
-        self._uid = uid
-        self.set_password(password)
-        self._dob = dob
+        self._atts = atts
+        self._comps = comps
+        self._yards = yards
+        self._tds = tds
+        self._pimage = pimage
 
     # a name getter method, extracts name from object
     @property
@@ -99,50 +65,49 @@ class User(db.Model):
     def name(self, name):
         self._name = name
     
-    # a getter method, extracts email from object
     @property
-    def uid(self):
-        return self._uid
+    def atts(self):
+        return self._atts
     
     # a setter function, allows name to be updated after initial object creation
-    @uid.setter
-    def uid(self, uid):
-        self._uid = uid
-        
-    # check if uid parameter matches user id in object, return boolean
-    def is_uid(self, uid):
-        return self._uid == uid
-    
-    @property
-    def password(self):
-        return self._password[0:10] + "..." # because of security only show 1st characters
+    @atts.setter
+    def atts(self, atts):
+        self._atts = atts
 
-    # update password, this is conventional setter
-    def set_password(self, password):
-        """Create a hashed password."""
-        self._password = generate_password_hash(password, method='sha256')
+    @property
+    def comps(self):
+        return self._comps
+    
+    # a setter function, allows name to be updated after initial object creation
+    @comps.setter
+    def comps(self, comps):
+        self._comps = comps
 
-    # check password parameter versus stored/encrypted password
-    def is_password(self, password):
-        """Check against hashed password."""
-        result = check_password_hash(self._password, password)
-        return result
-    
-    # dob property is returned as string, to avoid unfriendly outcomes
     @property
-    def dob(self):
-        dob_string = self._dob.strftime('%m-%d-%Y')
-        return dob_string
+    def yards(self):
+        return self._yards
     
-    # dob should be have verification for type date
-    @dob.setter
-    def dob(self, dob):
-        self._dob = dob
-    
+    # a setter function, allows name to be updated after initial object creation
+    @yards.setter
+    def yards(self, yards):
+        self._yards = yards
+
     @property
-    def age(self):
-        today = date.today()
-        return today.year - self._dob.year - ((today.month, today.day) < (self._dob.month, self._dob.day))
+    def tds(self):
+        return self._tds
+    
+    # a setter function, allows name to be updated after initial object creation
+    @tds.setter
+    def tds(self, tds):
+        self._tds = tds
+
+    @property
+    def pimage(self):
+        return self._pimage
+    
+    @pimage.setter
+    def pimage(self, pimage):
+        self._pimage = pimage
     
     # output content using str(object) in human readable form, uses getter
     # output content using json dumps, this is ready for API response
@@ -166,23 +131,30 @@ class User(db.Model):
     def read(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "uid": self.uid,
-            "dob": self.dob,
-            "age": self.age,
-            "posts": [post.read() for post in self.posts]
+            "name" : self.name,
+            "atts" : self.atts,
+            "comps" : self.comps,
+            "yards" : self.yards,
+            "tds": self.tds,
+            "pimage": self.pimage
         }
 
     # CRUD update: updates user name, password, phone
     # returns self
-    def update(self, name="", uid="", password=""):
+    def update(self, name, atts, comps, yards, tds, pimage):
         """only updates values with length"""
         if len(name) > 0:
             self.name = name
-        if len(uid) > 0:
-            self.uid = uid
-        if len(password) > 0:
-            self.set_password(password)
+        if len(atts) > 0:
+            self.atts = atts
+        if len(comps) > 0:
+            self.comps = comps
+        if len(yards) > 0:
+            self.yards = yards
+        if len(tds) > 0:
+            self.tds = tds
+        if len(pimage) > 0:
+            self.pimage = pimage
         db.session.commit()
         return self
 
@@ -204,25 +176,21 @@ def initUsers():
         db.init_app(app)
         db.create_all()
         """Tester data for table"""
-        u1 = User(name='Thomas Edison', uid='toby', password='123toby', dob=date(1847, 2, 11))
-        u2 = User(name='Nicholas Tesla', uid='niko', password='123niko')
-        u3 = User(name='Alexander Graham Bell', uid='lex', password='123lex')
-        u4 = User(name='Eli Whitney', uid='whit', password='123whit')
-        u5 = User(name='John Mortensen', uid='jm1021', dob=date(1959, 10, 21))
-
-        users = [u1, u2, u3, u4, u5]
-
-        """Builds sample user/note(s) data"""
-        for user in users:
+        p1 = User(name='Patrick Mahomes', atts='648', comps='435', yards='5250', tds='41', pimage='/images/pm.png')
+        p2 = User(name='Justin Herbert', atts='699', comps='477', yards='4739', tds='25', pimage='/images/jh.png')
+        p3 = User(name='Tom Brady', atts='733', comps='490', yards='4694', tds='25', pimage='/images/tb.png')
+        p4 = User(name='Kirk Cousins', atts='643', comps='424', yards='4547', tds='29', pimage='/images/kc.png')
+        p5 = User(name='Joe Burrow', atts='606', comps='414', yards='4475', tds='35', pimage='/images/jb.png')
+        p6 = User(name='Jared Goff', atts='587', comps='382', yards='4438', tds='29', pimage='/images/jg.png')
+        p7 = User(name='Josh Allen', atts='567', comps='359', yards='4283', tds='35', pimage='/images/ja.png')
+        p8 = User(name='Geno Smith', atts='572', comps='399', yards='4283', tds='30', pimage='/images/gs.png')
+        p9 = User(name='Trevor Lawrence', atts='584', comps='387', yards='4113', tds='25', pimage='/images/tl.png')
+        p10 = User(name='Jalen Hurts', atts='460', comps='306', yards='3701', tds='22', pimage='/images/jhurts.png')
+        qbs = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
+        for qb in qbs:
             try:
-                '''add a few 1 to 4 notes per user'''
-                for num in range(randrange(1, 4)):
-                    note = "#### " + user.name + " note " + str(num) + ". \n Generated by test data."
-                    user.posts.append(Post(id=user.id, note=note, image='ncs_logo.png'))
-                '''add user/post data to table'''
-                user.create()
+                qb.create()
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {user.uid}")
-            
+                print(f"Records exist, duplicate email, or error: {qb.name}")
