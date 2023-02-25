@@ -173,7 +173,6 @@ class User(db.Model):
 def initUsers():
     with app.app_context():
         """Create database and tables"""
-        db.init_app(app)
         db.create_all()
         """Tester data for table"""
         p1 = User(name='Patrick Mahomes', atts='648', comps='435', yards='5250', tds='41', pimage='{{ site.baseurl }}/images/pm.png')
