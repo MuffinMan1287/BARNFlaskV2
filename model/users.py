@@ -175,16 +175,16 @@ def initUsers():
         """Create database and tables"""
         db.create_all()
         """Tester data for table"""
-        p1 = User(name='Patrick Mahomes', atts='648', comps='435', yards='5250', tds='41', pimage='{{ site.baseurl }}/images/pm.png')
-        p2 = User(name='Justin Herbert', atts='699', comps='477', yards='4739', tds='25', pimage='{{ site.baseurl }}/images/jh.png')
-        p3 = User(name='Tom Brady', atts='733', comps='490', yards='4694', tds='25', pimage='{{ site.baseurl }}/images/tb.png')
-        p4 = User(name='Kirk Cousins', atts='643', comps='424', yards='4547', tds='29', pimage='{{ site.baseurl }}/images/kc.png')
-        p5 = User(name='Joe Burrow', atts='606', comps='414', yards='4475', tds='35', pimage='{{ site.baseurl }}/images/jb.png')
-        p6 = User(name='Jared Goff', atts='587', comps='382', yards='4438', tds='29', pimage='{{ site.baseurl }}/images/jg.png')
-        p7 = User(name='Josh Allen', atts='567', comps='359', yards='4283', tds='35', pimage='{{ site.baseurl }}/images/ja.png')
-        p8 = User(name='Geno Smith', atts='572', comps='399', yards='4283', tds='30', pimage='{{ site.baseurl }}/images/gs.png')
-        p9 = User(name='Trevor Lawrence', atts='584', comps='387', yards='4113', tds='25', pimage='{{ site.baseurl }}/images/tl.png')
-        p10 = User(name='Jalen Hurts', atts='460', comps='306', yards='3701', tds='22', pimage='{{ site.baseurl }}/images/jhurts.png')
+        p1 = User(name='Patrick Mahomes', atts='648', comps='435', yards='5250', tds='41', pimage='images/pm.png')
+        p2 = User(name='Justin Herbert', atts='699', comps='477', yards='4739', tds='25', pimage='images/jh.png')
+        p3 = User(name='Tom Brady', atts='733', comps='490', yards='4694', tds='25', pimage='images/tb.png')
+        p4 = User(name='Kirk Cousins', atts='643', comps='424', yards='4547', tds='29', pimage='images/kc.png')
+        p5 = User(name='Joe Burrow', atts='606', comps='414', yards='4475', tds='35', pimage='images/jb.png')
+        p6 = User(name='Jared Goff', atts='587', comps='382', yards='4438', tds='29', pimage='images/jg.png')
+        p7 = User(name='Josh Allen', atts='567', comps='359', yards='4283', tds='35', pimage='images/ja.png')
+        p8 = User(name='Geno Smith', atts='572', comps='399', yards='4283', tds='30', pimage='images/gs.png')
+        p9 = User(name='Trevor Lawrence', atts='584', comps='387', yards='4113', tds='25', pimage='images/tl.png')
+        p10 = User(name='Jalen Hurts', atts='460', comps='306', yards='3701', tds='22', pimage='images/jhurts.png')
         qbs = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]
         for qb in qbs:
             try:
