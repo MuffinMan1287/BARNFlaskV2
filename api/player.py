@@ -56,7 +56,7 @@ class PlayerAPI:
             if fplayer:
                 return jsonify(fplayer.read())
             # failure returns error
-            return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 400
+            return {'message': f'Processed {fplayer}, either a format error'}, 400
 
     class _Read(Resource):
         def get(self):

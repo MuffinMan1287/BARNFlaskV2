@@ -35,7 +35,7 @@ class Post(db.Model):
 # -- b.) User represents data we want to store, something that is built on db.Model
 # -- c.) SQLAlchemy ORM is layer on top of SQLAlchemy Core, then SQLAlchemy engine, SQL
 class Player(db.Model):
-    __tablename__ = 'favplays'  # table name is plural, class name is singular
+    __tablename__ = 'favplayes'  # table name is plural, class name is singular
 
     # Define the User schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
